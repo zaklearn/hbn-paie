@@ -2,6 +2,16 @@
 
 Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acceptation. Statut initial : À faire.
 
+## Statuts (mis à jour en fin de sprint)
+| Story | Statut |
+|---|---|
+| US-01 | Fait |
+| US-02 | Bloqué (choix MySQL A/B + compte admin à déposer — S0_RAPPORT Q1) |
+| US-03 | Fait (local) ; Bloqué pour la création GitHub (accès — Q2) |
+| US-04 | Fait (mesure en Python 3.14, remesure 3.12 proposée — Q3) |
+| US-05 | Bloqué (fichiers sources à déposer — Q4) |
+| US-10 à US-64 | À faire |
+
 ## E0 — Cadrage (S0)
 | ID | Story | CA |
 |---|---|---|
