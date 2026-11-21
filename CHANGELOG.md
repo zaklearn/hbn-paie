@@ -1,5 +1,11 @@
 # Changelog — HBN Paie
 
+## S4 — Interface Vue 3 (21/11/2026, tag `sprint-S4`)
+- SPA Vite + Vue 3 + TS + Pinia + Tailwind : menu 6 entrées, barre de contexte (période, salarié) dans l'URL, rôles.
+- Tableau de bord, Trésorerie (4 onglets, mobile), Paie du mois (étapes), Salariés (fiche à onglets), Bulletins & exports, Configuration.
+- Aucun calcul en JS : aperçu, totaux, régularité et rapprochement fournis par l'API.
+- Vitest (21), e2e Playwright de dev (3) et captures des 5 écrans ; SPA servie par FastAPI à la racine.
+
 ## S3 — Trésorerie multi-salariés (21/11/2026, tag `sprint-S3`)
 - Legacy ezzinecdi (db_gen, integrity, rapport, dates) repris à l'identique ; 9/9 tests d'origine.
 - Plans de versement par salarié versionnés et immuables ; échéances par salarié avec verrou optimiste.

@@ -2,13 +2,14 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S3 — Trésorerie multi-salariés **terminé** — tag `sprint-S3` |
-| Prochaine action autorisée | Aucune avant la validation du rapport S3 (`docs/sprints/S3_RAPPORT.md`) et le « go S4 » |
+| Sprint courant | S4 — Interface Vue 3 **terminé** — tag `sprint-S4` |
+| Prochaine action autorisée | Aucune avant la validation du rapport S4 (`docs/sprints/S4_RAPPORT.md`) et le « go S5 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
 
 ## Décisions du propriétaire
+- **S3 (21/11/2026)** : écarts 1–6 validés (date de paiement saisie, régularisation −2/+2, CNSS en information, UID ICS, import/remplacement en S5, montants du gabarit au plan).
 - **S2 (21/11/2026)** : `PAIE_SEED_DEMO=0` par défaut validé ; scripts reset_production / supprimer_demo (Windows, SQLite) abandonnés.
 
 ### Sur le rapport S0 (21/11/2026)
@@ -33,10 +34,12 @@
 
 - **S3 (21/11/2026)** : legacy ezzinecdi copié (imports seuls modifiés), 9/9 tests d'origine ; plans de versement immuables, échéances par salarié (version, source_ref) ; réconciliation au plan en simulation ; exports d'origine par salarié ; rapprochement en lecture seule branché en avertissement. Test R0 : paie clôturée identique avec et sans écart de trésorerie. Suite : 265 passés + 3 ignorés.
 
+- **S4 (21/11/2026)** : SPA Vue 3 (6 menus, barre de contexte URL, StatusBadge commun, rôles), 5 écrans des maquettes, aucun calcul en JS (grep documenté), totaux du tableau de bord côté serveur ; Vitest 21, e2e Playwright 3 (parcours complet, 390 px, rôle user), captures dans `docs/sprints/S4_captures/` ; backend 269 + 3 ignorés.
+
 ## Actions reportées
 - Sauvegarde/restauration (`backup.py` SQLite, 2 tests de `test_services_misc` + `test_backup_integrity`) → S5 (US-50).
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
 ## À confirmer
-- Validation S3 : date de paiement saisie, plage de régularisation −2/+2, CNSS en information seule, UID ICS, import/remplacement et réconciliation au chargement reportés (S5) ; push de `sprint-S3`.
+- Validation S4 : observation automatique du paiement (pas de champ libre), onglets en haut sur mobile, « Salaires nets du mois » = total des plans, taux saisis en décimal exact ; push de `sprint-S4`.
 - Q4 : fichiers sources + matricule (US-05).
