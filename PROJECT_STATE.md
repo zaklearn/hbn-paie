@@ -2,8 +2,8 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S0 — cadrage **terminé** (US-02, US-05 bloquées en attente du propriétaire) — tag `sprint-S0` |
-| Prochaine action autorisée | Push de `main` + `sprint-S0` via la clé de déploiement (Q2), puis S1 (feu vert donné, conditionné au push) |
+| Sprint courant | S1 — socle et noyau gelé **terminé** — tag `sprint-S1` |
+| Prochaine action autorisée | Aucune avant la validation du rapport S1 (`docs/sprints/S1_RAPPORT.md`) et le « go S2 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
@@ -24,6 +24,12 @@
 - Référence R0.3 (Python 3.14.4) : paie-bulletins 238 passés + 1 ignoré (Excel absent) ; ezzinecdi 9 passés ; golden 6 scénarios.
 - Dossiers VPS : `/opt/hbnfactory/platforms/paie/` (0750), `migration/sources/` (0700).
 
+- **S1 (21/11/2026)** : référence remesurée en Python 3.12.16 = 238 + 1 ignoré / 9, identique test par test à 3.14. Noyau gelé copié (10 fichiers, 14 imports réécrits) ; `UPSTREAM.sha256` + test bloquant ; altération détectée. Tests noyau portés : 92 + 1 ignoré, identifiants identiques à la référence. Suite complète : 107 + 1 ignoré. `/health` 200 sous Uvicorn. MySQL dev 8.4.13 : 225 Mio / 256 au repos (processus ≈116 Mio), 0 OOM.
+
+## Actions reportées
+- `test_pdf.py` (9 tests) → S2, avec les services `payroll` / `master_data` (fixture `september`).
+- `tests/paie/demo_reference.py` → supprimé en S2 quand `demo.py` est porté (imports rétablis).
+
 ## À confirmer
-- Ajout de la clé publique de déploiement (écriture) dans GitHub par le propriétaire, puis push.
+- Validation des écarts S1 (report de `test_pdf`, `demo_reference.py`) et push de `sprint-S1`.
 - Q4 : fichiers sources + matricule (US-05).

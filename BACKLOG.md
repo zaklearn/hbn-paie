@@ -10,7 +10,11 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-03 | Fait (local) ; push en attente de la clé de déploiement (Q2) |
 | US-04 | Fait en Python 3.14 ; remesure en 3.12 dans `hbn-paie-dev` au début de S1 (Q3) |
 | US-05 | Bloqué (fichiers sources et matricule à déposer par le propriétaire — Q4) ; ne bloque pas S1 |
-| US-10 à US-64 | À faire |
+| US-10 | Fait |
+| US-11 | Fait |
+| US-12 | Fait ; `test_pdf.py` (9 tests) reporté en S2 (dépend de SQLite/services) |
+| US-13 | Fait |
+| US-20 à US-64 | À faire |
 
 ## E0 — Cadrage (S0)
 | ID | Story | CA |
