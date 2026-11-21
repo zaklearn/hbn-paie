@@ -48,6 +48,44 @@ services:
       timeout: 3s
       retries: 40
 
+  api:
+    profiles: ["e2e"]
+    image: hbn-paie-dev-test:py3.12
+    mem_limit: 256m
+    networks: [dev]
+    environment:
+      PAIE_DB_URL: "mysql+pymysql://root:${PAIE_DEV_DB_ROOT_PASSWORD:-}@mysql:3306/paie_e2e?charset=utf8mb4"
+      PAIE_COOKIE_SECURE: "false"         # HTTP interne au réseau de dev uniquement
+      PAIE_STATIC_DIR: /work/frontend/dist
+      E2E_SERVER_URL: "mysql+pymysql://root:${PAIE_DEV_DB_ROOT_PASSWORD:-}@mysql:3306/"
+      E2E_ADMIN_PW: ${E2E_ADMIN_PW:-}
+      E2E_USER_PW: ${E2E_USER_PW:-}
+    volumes: [".:/work:ro"]
+    depends_on:
+      mysql: {condition: service_healthy}
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 3s
+      retries: 40
+
+  e2e:
+    profiles: ["e2e"]
+    image: mcr.microsoft.com/playwright:v1.65.1-noble
+    mem_limit: 1g                          # Chromium : 256 Mo ne suffisent pas (signalé au rapport S4)
+    networks: [dev]
+    working_dir: /work/frontend
+    environment:
+      E2E_BASE_URL: http://api:8000
+      E2E_ADMIN_PW: ${E2E_ADMIN_PW:-}
+      E2E_USER_PW: ${E2E_USER_PW:-}
+      E2E_CAPTURES: /captures
+      HOME: /tmp
+    volumes: [".:/work:ro", "./docs/sprints/S4_captures:/captures"]
+    depends_on:
+      api: {condition: service_healthy}
+    command: ["npx", "playwright", "test", "--output=/tmp/test-results"]
+
 networks:
   dev:
     internal: true
