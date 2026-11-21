@@ -1,0 +1,9 @@
+upstream/
+.git/
+.env*
+data/
+migration/
+secrets/
+*.db
+docs/
+.venv*/

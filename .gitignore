@@ -1,0 +1,12 @@
+# HBN Paie — jamais versionnés (R4, R7)
+.env*
+data/
+migration/
+*.db
+secrets/
+# environnements locaux
+.venv*/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
