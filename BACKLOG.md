@@ -6,10 +6,10 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | Story | Statut |
 |---|---|
 | US-01 | Fait |
-| US-02 | Bloqué (choix MySQL A/B + compte admin à déposer — S0_RAPPORT Q1) |
-| US-03 | Fait (local) ; Bloqué pour la création GitHub (accès — Q2) |
-| US-04 | Fait (mesure en Python 3.14, remesure 3.12 proposée — Q3) |
-| US-05 | Bloqué (fichiers sources à déposer — Q4) |
+| US-02 | Fait — remplacée par la décision Q1 : MySQL dédié `paie-db` (8.4), aucun compte à déposer ; test de connexion reporté au MySQL de dev (S1) |
+| US-03 | Fait (local) ; push en attente de la clé de déploiement (Q2) |
+| US-04 | Fait en Python 3.14 ; remesure en 3.12 dans `hbn-paie-dev` au début de S1 (Q3) |
+| US-05 | Bloqué (fichiers sources et matricule à déposer par le propriétaire — Q4) ; ne bloque pas S1 |
 | US-10 à US-64 | À faire |
 
 ## E0 — Cadrage (S0)
@@ -27,7 +27,7 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-10 | Squelette FastAPI (`core/`, `db/`, `paie/`, `tresorerie/`, `socle/`), config par variables d'environnement, `/health` | App démarre, test santé OK |
 | US-11 | Noyau gelé copié (R0.1), `UPSTREAM.sha256`, `check_core_integrity.py`, test bloquant | Test intégrité vert ; une modification volontaire le fait échouer |
 | US-12 | Tests du noyau portés (engine, écarts PDF, PDF, golden, référence Excel) sans changer d'attendu | 100 % verts, nombre = référence US-04 |
-| US-13 | Environnement de dev : MySQL 8 en conteneur (dev/CI uniquement), Alembic initialisé | `alembic upgrade head` sur base vide OK |
+| US-13 | Environnement de dev : MySQL 8.4 en conteneur (dev/CI uniquement), Alembic initialisé | `alembic upgrade head` sur base vide OK |
 
 ## E2 — Paie sur MySQL (S2)
 | ID | Story | CA |
@@ -73,7 +73,7 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | ID | Story | CA |
 |---|---|---|
 | US-60 | Dockerfile multi-stage, `compose.yaml` (Traefik : `websecure`, `le`, `hbn-secure-headers@file`, port 8000, réseau `hbn-proxy`), limite 512 Mo, `unless-stopped`, healthcheck | `docker compose config` OK |
-| US-61 | **L3** Création de la base `paie` + utilisateur dédié, migrations, démarrage | HTTPS 200, aucun impact sur Tangerine ni le portfolio |
+| US-61 | **L3** Création du service `paie-db` (MySQL 8.4 dédié), de la base `paie` + utilisateur dédié, migrations, démarrage | HTTPS 200, aucun impact sur Tangerine ni le portfolio |
 | US-62 | **L3** Import des données réelles + rapport de migration validé par le propriétaire | Validation écrite |
 | US-63 | Recette fonctionnelle complète (checklist R2) et mesure mémoire | Checklist signée |
 | US-64 | Bascule : apps Streamlit en lecture seule, documentation d'exploitation, mise à jour des fichiers d'état HBNFACTORY | Mise en service |
