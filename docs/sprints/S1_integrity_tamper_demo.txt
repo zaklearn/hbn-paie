@@ -1,0 +1,5 @@
+# Démonstration US-11 (21/11/2026) : engine.py ligne 36, « , 2) » -> « , 3) » ; test bloquant en échec, puis restauration (3 passed).
+E         MODIFIÉ : calculations/engine.py (attendu 518c6851849f…, obtenu d9925b37bd29…)
+E       assert ['MODIFIÉ : c...925b37bd29…)'] == []
+E         Left contains one more item: 'MODIFIÉ : calculations/engine.py (attendu 518c6851849f…, obtenu d9925b37bd29…)'
+1 failed, 2 passed in 0.09s

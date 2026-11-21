@@ -1,0 +1,12 @@
+# SHA-256 des 10 fichiers du noyau gelé, calculés sur paie-bulletins@df7ff126fdbb3d3c0a509480507361eec6b2b842 (src/).
+# Les copies sont comparées après normalisation « from app.paie.core. » -> « from src. ». Ne pas modifier.
+16616a7d5c775cf0d8a5d77a215b7b6b23a38ddbdc8f7921af69e9a061ecf6c8  calculations/money.py
+518c6851849f4e683d5c8b5d010f197e33a0fea83de9d11fdb467fa446437e56  calculations/engine.py
+429f90f7024323088cc340a8b5cd77d4b218773a0a7cced5370e37a2e01a8b27  calculations/cumuls.py
+3863ee38f599e3c2f42162dfa98aa944485b7cdbc6feebd911d5b9ee02cd4977  calculations/defaults.py
+a6653dab197e7a62aaf94b5bfa4893f3d7b09711e66771da94319aa7eaa5f9a8  models/parameters.py
+ec2885fcb459c45337225f248dcc9b30ab9549979a1c686fc74815f237e9b794  models/payroll.py
+412fb8d987560dac46e1b828840b51668ff41e6207737fc69205f19f26c0a922  models/entities.py
+1cab9a8795637d5d95e4447cb431513beb20f0a2b8ff22237a4cff85f2f5416b  validation/validators.py
+6fc6c3ac173ba6468f8e7c6297c357b2388c3fc8c437f63a25b0945c898b4d82  pdf/bulletin.py
+872616592832e57b9ade12e525dbcf25346d94e3298cf4899c241c5c639b721b  formatting.py
