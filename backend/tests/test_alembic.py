@@ -28,4 +28,13 @@ def test_alembic_upgrade_head_on_empty_database():
                          capture_output=True, text=True)
     assert run.returncode == 0, run.stderr[-2000:].replace(TEST_DB_URL, "***")
     with engine.connect() as conn:
-        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar() == "0001"
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar() == "0003"
+        assert conn.execute(text("SELECT MAX(version) FROM schema_version")).scalar() == 1
+        triggers = conn.execute(text(
+            "SELECT TRIGGER_NAME FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = DATABASE()")).scalars().all()
+    assert sorted(triggers) == sorted([
+        "trg_parameter_sets_immutable", "trg_payslips_closed_immutable", "trg_payslips_closed_nodelete",
+        "trg_documents_immutable", "trg_documents_nodelete", "trg_audit_append_only"])
+    assert set(inspect(engine).get_table_names()) == {
+        "alembic_version", "schema_version", "company", "employees", "parameter_sets", "payslips",
+        "documents", "audit_log", "users", "sessions"}

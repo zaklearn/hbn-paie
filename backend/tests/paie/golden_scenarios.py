@@ -10,7 +10,7 @@ from decimal import Decimal as D
 from app.paie.core.calculations.defaults import DEFAULT_PARAMETERS
 from app.paie.core.models.parameters import METHODE_TAUX_CUMULE
 from app.paie.core.models.payroll import MonthlyInput
-from tests.paie.demo_reference import REFERENCE_INPUT
+from app.paie.services.demo import REFERENCE_INPUT
 
 SCENARIOS: dict[str, tuple[MonthlyInput, int, str]] = {
     "reference_septembre_2026": (REFERENCE_INPUT, 0, "somme_lignes"),
