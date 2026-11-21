@@ -1,5 +1,6 @@
 # HBN Paie — environnement de DEV uniquement (projet compose « hbn-paie-dev »).
-# Aucun port publié ; limite 256 Mo par service ; arrêté après les tests.
+# Aucun port publié ; réseau interne sans sortie ; limite 256 Mo par service ;
+# arrêté après les tests (scripts/dev-test.sh). Ne touche à aucun autre projet du VPS.
 name: hbn-paie-dev
 services:
   ref:
@@ -9,3 +10,44 @@ services:
     mem_limit: 256m
     network_mode: none
     volumes: ["./upstream:/upstream:ro"]
+
+  test:
+    build: {context: ./backend, dockerfile: ../docker/test.Dockerfile}
+    image: hbn-paie-dev-test:py3.12
+    mem_limit: 256m
+    networks: [dev]
+    environment:
+      PAIE_ENV: test
+      PAIE_TEST_DB_URL: "mysql+pymysql://root:${PAIE_DEV_DB_ROOT_PASSWORD:-}@mysql:3306/paie_test"
+      PAIE_REFERENCE_XLSX: ${PAIE_REFERENCE_XLSX:-}
+    volumes: [".:/work:ro"]
+    depends_on:
+      mysql: {condition: service_healthy}
+    command: ["python", "-m", "pytest", "-q"]
+
+  mysql:
+    image: mysql:8.4
+    mem_limit: 256m
+    networks: [dev]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PAIE_DEV_DB_ROOT_PASSWORD:?mot de passe de dev requis (scripts/dev-test.sh le génère)}
+      MYSQL_DATABASE: paie_test
+    command:
+      - --innodb-buffer-pool-size=64M
+      - --performance-schema=OFF
+      - --max-connections=30
+      - --skip-name-resolve
+      # dev seulement : datadir sur tmpfs (compté dans la mémoire du conteneur) -> redo minimal
+      - --innodb-redo-log-capacity=8M
+      - --innodb-log-buffer-size=4M
+      - --temptable-max-ram=16M
+    tmpfs: ["/var/lib/mysql:size=512m"]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+networks:
+  dev:
+    internal: true
