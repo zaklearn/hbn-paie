@@ -29,6 +29,28 @@ def bootstrap(db: Database, *, migrate: bool, seed_demo: bool) -> None:
         demo.seed_demo(db)
 
 
+def mount_spa(app: FastAPI, static_dir: str) -> None:
+    """SPA Vue servie à la racine « / » (modèle SmartCompta) ; toute route hors /api renvoie index.html."""
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+
+    root = Path(static_dir).resolve()
+    index = root / "index.html"
+    if not index.is_file():
+        log.warning("interface absente : %s/index.html introuvable", static_dir)
+        return
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str):
+        if path.startswith("api/") or path == "api":
+            return JSONResponse(status_code=404, content={"detail": "Not Found"})
+        candidate = (root / path).resolve()
+        if path and candidate.is_file() and root in candidate.parents:
+            return FileResponse(candidate)
+        return FileResponse(index, headers={"Cache-Control": "no-cache"})
+
+
 def create_app(database: Database | None = None) -> FastAPI:
     settings = get_settings()
     setup_logging(settings.log_level)
@@ -83,6 +105,8 @@ def create_app(database: Database | None = None) -> FastAPI:
     app.include_router(routes_socle.router)
     app.include_router(routes_paie.router)
     app.include_router(routes_tresorerie.router)
+    if settings.static_dir:
+        mount_spa(app, settings.static_dir)
     return app
 
 

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     auto_migrate: bool = True              # migrations au démarrage, comme l'original (db.migrate())
     cookie_secure: bool = True             # cookie de session « Secure » (HTTPS derrière Traefik)
     session_hours: int = 8
+    static_dir: str | None = None          # dossier de la SPA construite (frontend/dist), servie à la racine
 
 
 @lru_cache

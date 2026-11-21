@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { font-family: Inter, system-ui, sans-serif; color: #16202E; }
+  body { margin: 0; background: #F5F6F8; }
+  :focus-visible { outline: 2px solid #1F3864; outline-offset: 2px; }
+}
+@layer components {
+  .btn { @apply inline-flex items-center justify-center min-h-cible px-4 rounded-lg text-sm font-semibold; }
+  .btn-primaire { @apply btn bg-primaire text-white hover:bg-menu disabled:opacity-50; }
+  .btn-contour { @apply btn border border-champ bg-white text-encre font-normal hover:bg-fond disabled:opacity-50; }
+  .btn-lien { @apply inline-flex items-center min-h-cible text-sm font-semibold text-primaire hover:text-menu; }
+  .carte { @apply bg-white border border-bordure rounded-xl; }
+  .th { @apply text-xs font-semibold text-attenue uppercase tracking-wide px-3 py-2.5 text-left border-b border-bordure; }
+  .td { @apply text-sm px-3 py-3 border-b border-ligne align-middle; }
+  .champ { @apply h-11 px-3 border border-champ rounded-lg text-[15px] text-encre bg-white; }
+  .etiquette { @apply flex flex-col gap-1.5 text-[13px] text-[#3F4754]; }
+  .onglet { @apply inline-flex items-center min-h-cible px-4 text-sm text-attenue border-b-2 border-transparent; }
+  .onglet-actif { @apply text-primaire font-semibold border-primaire; }
+  .chiffres { font-variant-numeric: tabular-nums; }
+}
