@@ -2,13 +2,16 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S2 — Paie sur MySQL **terminé** — tag `sprint-S2` |
-| Prochaine action autorisée | Aucune avant la validation du rapport S2 (`docs/sprints/S2_RAPPORT.md`) et le « go S3 » |
+| Sprint courant | S3 — Trésorerie multi-salariés **terminé** — tag `sprint-S3` |
+| Prochaine action autorisée | Aucune avant la validation du rapport S3 (`docs/sprints/S3_RAPPORT.md`) et le « go S4 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
 
-## Décisions du propriétaire sur le rapport S0 (21/11/2026)
+## Décisions du propriétaire
+- **S2 (21/11/2026)** : `PAIE_SEED_DEMO=0` par défaut validé ; scripts reset_production / supprimer_demo (Windows, SQLite) abandonnés.
+
+### Sur le rapport S0 (21/11/2026)
 - **Q1 — DÉCISION VALIDÉE, remplace D2** : MySQL **dédié** `paie-db` (`mysql:8.4`) dans le compose de la plateforme paie ; réseau `paie-internal` seul, aucun port publié, volume `data/mysql` ; `innodb_buffer_pool_size=128M`, `performance_schema=OFF`, `max_connections=30`, `mem_limit: 384m` (consommation au repos à mesurer). Identifiants root et `paie_app` générés par `scripts/gen-env.sh` dans `.env` (0600), jamais affichés ; pas de dossier `secrets/`. Jusqu'à S5 : MySQL 8.4 de test dans `hbn-paie-dev` uniquement ; MySQL de production = étape L3 de S6. Portfolio et `portfolio-internal` jamais touchés. S6 adapté (`docs/claude-code/S6_DEPLOIEMENT.md`).
 - **Q2 — DÉCISION VALIDÉE** : clé de déploiement SSH ed25519 `/root/.ssh/hbn-paie-deploy` (écriture), dépôt privé `zaklearn/hbn-paie` créé par le propriétaire ; pas de `gh`.
 - **Q3 — DÉCISION VALIDÉE** : tests en `python:3.12-slim` dans `hbn-paie-dev` ; dépendances figées aux versions de la mesure (reportlab 5.1.0, pandas 3.1.1, openpyxl 3.1.5) si disponibles en 3.12, sinon signaler avant de choisir ; remesure attendue 238 + 1 ignoré / 9 ; tout écart 3.14 ↔ 3.12 sur les tests paie = STOP (R0).
@@ -28,10 +31,12 @@
 
 - **S2 (21/11/2026)** : schéma MySQL (Alembic 0002/0003), 6 déclencheurs SIGNAL aux messages d'origine, dépôts et services portés (écarts listés et réversibles, `scripts/port_sources.py`), comptes/rôles/sessions, API `/api/paie/*`. Suite : 222 passés + 3 ignorés. Bulletins de la démo juillet–septembre 2026 : texte PDF, résultats, cumuls et copies figées identiques à l'original.
 
+- **S3 (21/11/2026)** : legacy ezzinecdi copié (imports seuls modifiés), 9/9 tests d'origine ; plans de versement immuables, échéances par salarié (version, source_ref) ; réconciliation au plan en simulation ; exports d'origine par salarié ; rapprochement en lecture seule branché en avertissement. Test R0 : paie clôturée identique avec et sans écart de trésorerie. Suite : 265 passés + 3 ignorés.
+
 ## Actions reportées
 - Sauvegarde/restauration (`backup.py` SQLite, 2 tests de `test_services_misc` + `test_backup_integrity`) → S5 (US-50).
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
 ## À confirmer
-- Validation S2 : `PAIE_SEED_DEMO=0` par défaut ; abandon des scripts reset_production / supprimer_demo (Windows, SQLite) ; push de `sprint-S2`.
+- Validation S3 : date de paiement saisie, plage de régularisation −2/+2, CNSS en information seule, UID ICS, import/remplacement et réconciliation au chargement reportés (S5) ; push de `sprint-S3`.
 - Q4 : fichiers sources + matricule (US-05).

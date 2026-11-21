@@ -1,5 +1,12 @@
 # Changelog — HBN Paie
 
+## S3 — Trésorerie multi-salariés (21/11/2026, tag `sprint-S3`)
+- Legacy ezzinecdi (db_gen, integrity, rapport, dates) repris à l'identique ; 9/9 tests d'origine.
+- Plans de versement par salarié versionnés et immuables ; échéances par salarié avec verrou optimiste.
+- Déclarer (tous les actifs ou un salarié), payer (statut au jour), dévalider, régularisation, conflit 409.
+- Réconciliation au plan en simulation ; exports Excel/ICS d'origine par salarié.
+- Rapprochement versé/net et CNSS/cotisations en lecture seule, avertissement de clôture ; API /api/tresorerie/*.
+
 ## S2 — Paie sur MySQL (21/11/2026, tag `sprint-S2`)
 - Schéma paie MySQL 8.4 (Alembic 0002) : contraintes, colonnes générées, 6 déclencheurs SIGNAL ; socle users/sessions (0003).
 - Dépôts et services de paie-bulletins portés en logique identique (écarts listés, réversibles, testés).
