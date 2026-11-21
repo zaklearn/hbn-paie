@@ -6,7 +6,7 @@
 | Prochaine action autorisée | Aucune avant les réponses Q1–Q5 de `docs/sprints/S0_RAPPORT.md` et le « go S1 » |
 
 ## Décisions validées
-- Conception v2.1 (D1–D9), `docs/claude-code/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
+- Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
 
 ## Faits vérifiés (21/11/2026)
 - DNS `paie.hbnfactory.cloud` → 2.25.6.153 = IP du VPS (local, 1.1.1.1, 8.8.8.8).
