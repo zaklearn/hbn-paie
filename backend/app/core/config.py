@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     seed_demo: bool = False
     log_level: str = "INFO"
     db_pool_recycle: int = 3600
+    auto_migrate: bool = True              # migrations au démarrage, comme l'original (db.migrate())
+    cookie_secure: bool = True             # cookie de session « Secure » (HTTPS derrière Traefik)
+    session_hours: int = 8
 
 
 @lru_cache
