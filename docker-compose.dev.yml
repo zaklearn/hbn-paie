@@ -1,0 +1,11 @@
+# HBN Paie — environnement de DEV uniquement (projet compose « hbn-paie-dev »).
+# Aucun port publié ; limite 256 Mo par service ; arrêté après les tests.
+name: hbn-paie-dev
+services:
+  ref:
+    profiles: ["ref"]
+    build: {context: ./docker, dockerfile: ref.Dockerfile, additional_contexts: {upstream: ./upstream}}
+    image: hbn-paie-dev-ref:py3.12
+    mem_limit: 256m
+    network_mode: none
+    volumes: ["./upstream:/upstream:ro"]
