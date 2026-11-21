@@ -158,6 +158,18 @@ def _suffix(year: int, month: int | None) -> str:
     return f"{year}" + (f"-{month:02d}" if month else "")
 
 
+# --- Référentiels (libellés d'origine du noyau) ---------------------------------------------
+
+@router.get("/referentiels")
+def referentiels(_: User = Depends(current_user)) -> dict:
+    from app.paie.core.models.entities import MODES_PAIEMENT, SITUATIONS_FAMILIALES
+    from app.paie.core.models.parameters import METHODES_TOTAUX
+    from app.paie.core.models.payroll import MOIS_FR, STATUTS_LIBELLES
+
+    return {"situations_familiales": list(SITUATIONS_FAMILIALES), "modes_paiement": list(MODES_PAIEMENT),
+            "mois": list(MOIS_FR), "statuts": STATUTS_LIBELLES, "methodes_totaux": dict(METHODES_TOTAUX)}
+
+
 # --- Entreprise ---------------------------------------------------------------------------
 
 @router.get("/entreprise")
@@ -350,6 +362,22 @@ def document(payslip_id: int, _: User = Depends(current_user), db: Database = De
 
 
 # --- Tableau de bord, journal, récapitulatifs, exports ---------------------------------------
+
+@router.get("/mois")
+def month_payroll(year: int, month: int, _: User = Depends(current_user), db: Database = Depends(get_db)) -> list[dict]:
+    """Paie du mois : salariés actifs du mois et état de leur paie (agrégat en lecture seule)."""
+    from app.socle import dashboard as dash
+
+    return dash.month_payroll(db, year, month)
+
+
+@router.get("/tableau-de-bord-mois")
+def monthly_dashboard(year: int, month: int, _: User = Depends(current_user), db: Database = Depends(get_db)) -> dict:
+    """Tableau de bord du mois (maquette 1) : totaux calculés côté serveur."""
+    from app.socle import dashboard as dash
+
+    return dash.dashboard(db, year, month)
+
 
 @router.get("/tableau-de-bord")
 def dashboard(year: int, user: User = Depends(current_user), db: Database = Depends(get_db)) -> dict:
