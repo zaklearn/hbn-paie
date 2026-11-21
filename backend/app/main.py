@@ -76,10 +76,13 @@ def create_app(database: Database | None = None) -> FastAPI:
                 db_state = "injoignable"
         return {"status": "ok", "version": __version__, "db": db_state}
 
-    from app.api import routes_paie, routes_socle
+    from app.api import routes_paie, routes_socle, routes_tresorerie
+    from app.tresorerie.services import rapprochement
 
+    rapprochement.register()          # avertissement de clôture « versements incomplets / écart » (S3)
     app.include_router(routes_socle.router)
     app.include_router(routes_paie.router)
+    app.include_router(routes_tresorerie.router)
     return app
 
 
