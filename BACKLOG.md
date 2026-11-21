@@ -12,9 +12,15 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-05 | Bloqué (fichiers sources et matricule à déposer par le propriétaire — Q4) ; ne bloque pas S1 |
 | US-10 | Fait |
 | US-11 | Fait |
-| US-12 | Fait ; `test_pdf.py` (9 tests) reporté en S2 (dépend de SQLite/services) |
+| US-12 | Fait (`test_pdf.py` porté en S2 : 9/9) |
 | US-13 | Fait |
-| US-20 à US-64 | À faire |
+| US-20 | Fait |
+| US-21 | Fait |
+| US-22 | Fait |
+| US-23 | Fait (sauvegarde/restauration → S5) |
+| US-24 | Fait |
+| US-25 | Fait |
+| US-30 à US-64 | À faire |
 
 ## E0 — Cadrage (S0)
 | ID | Story | CA |

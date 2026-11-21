@@ -2,8 +2,8 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S1 — socle et noyau gelé **terminé** — tag `sprint-S1` |
-| Prochaine action autorisée | Aucune avant la validation du rapport S1 (`docs/sprints/S1_RAPPORT.md`) et le « go S2 » |
+| Sprint courant | S2 — Paie sur MySQL **terminé** — tag `sprint-S2` |
+| Prochaine action autorisée | Aucune avant la validation du rapport S2 (`docs/sprints/S2_RAPPORT.md`) et le « go S3 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
@@ -26,10 +26,12 @@
 
 - **S1 (21/11/2026)** : référence remesurée en Python 3.12.16 = 238 + 1 ignoré / 9, identique test par test à 3.14. Noyau gelé copié (10 fichiers, 14 imports réécrits) ; `UPSTREAM.sha256` + test bloquant ; altération détectée. Tests noyau portés : 92 + 1 ignoré, identifiants identiques à la référence. Suite complète : 107 + 1 ignoré. `/health` 200 sous Uvicorn. MySQL dev 8.4.13 : 225 Mio / 256 au repos (processus ≈116 Mio), 0 OOM.
 
+- **S2 (21/11/2026)** : schéma MySQL (Alembic 0002/0003), 6 déclencheurs SIGNAL aux messages d'origine, dépôts et services portés (écarts listés et réversibles, `scripts/port_sources.py`), comptes/rôles/sessions, API `/api/paie/*`. Suite : 222 passés + 3 ignorés. Bulletins de la démo juillet–septembre 2026 : texte PDF, résultats, cumuls et copies figées identiques à l'original.
+
 ## Actions reportées
-- `test_pdf.py` (9 tests) → S2, avec les services `payroll` / `master_data` (fixture `september`).
-- `tests/paie/demo_reference.py` → supprimé en S2 quand `demo.py` est porté (imports rétablis).
+- Sauvegarde/restauration (`backup.py` SQLite, 2 tests de `test_services_misc` + `test_backup_integrity`) → S5 (US-50).
+- Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
 ## À confirmer
-- Validation des écarts S1 (report de `test_pdf`, `demo_reference.py`) et push de `sprint-S1`.
+- Validation S2 : `PAIE_SEED_DEMO=0` par défaut ; abandon des scripts reset_production / supprimer_demo (Windows, SQLite) ; push de `sprint-S2`.
 - Q4 : fichiers sources + matricule (US-05).
