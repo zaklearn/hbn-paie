@@ -1,0 +1,14 @@
+# Dépendances directes (versions figées dans requirements.txt, résolues sous Python 3.12)
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+sqlalchemy
+pymysql
+cryptography
+alembic
+# Calcul / documents — versions de la mesure de référence (Q3)
+reportlab==5.1.0
+pandas==3.1.1
+openpyxl==3.1.5
+pillow==13.0.0
