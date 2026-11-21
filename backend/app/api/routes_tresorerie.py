@@ -83,7 +83,8 @@ def template(_: User = Depends(current_user)) -> list[dict]:
 
 @router.get("/plans")
 def list_plans(employee_id: int, _: User = Depends(current_user), db: Database = Depends(get_db)) -> list[dict]:
-    return [asdict(p) | {"total_salaire": p.total_salaire} for p in echeancier.list_plans(db, employee_id)]
+    return [asdict(p) | {"total_salaire": p.total_salaire, "total_mensuel": p.total_salaire + p.cnss}
+            for p in echeancier.list_plans(db, employee_id)]
 
 
 @router.post("/plans", status_code=201)
@@ -127,6 +128,18 @@ def declare(body: DeclareIn, user: User = Depends(superadmin), db: Database = De
     report = echeancier.declare_month(db, user.actor, body.year, body.month, body.employee_id)
     return {"periode": report.periode, "declares": report.declares, "ignores": report.ignores,
             "echeances_par_salarie": report.echeances_par_salarie, "message": report.message}
+
+
+@router.get("/echeances/{echeance_id}/regularite")
+def preview_regularity(echeance_id: int, date_paiement: date | None = None, _: User = Depends(current_user),
+                       db: Database = Depends(get_db)) -> dict:
+    """Aperçu du statut qu'aurait le paiement à cette date (règle d'origine, aucune écriture)."""
+    e = echeancier.get_echeance(db, echeance_id)
+    if e is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Échéance introuvable.")
+    paid_on = (date_paiement or dates.aujourdhui()).isoformat()
+    reg = integrity.regularite(paid_on, e.date_echeance)
+    return {"date_paiement": paid_on, "regularite": reg, "statut": integrity.statut_paye(reg)}
 
 
 @router.post("/echeances/{echeance_id}/payer")
