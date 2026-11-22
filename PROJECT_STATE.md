@@ -41,6 +41,8 @@
 
 - **US-05 (22/11/2026), source (a) reçue** : `migration/sources/paie_20261027_003333_147569_manuelle.db` (0600, 94 208 octets, SHA-256 `18adadc1d55f6397221e8160d86e373fdce91cd91d9eaa7f90b06dc539ecfef0`). Sauvegarde paie-bulletins du 27/10/2026 00:33 : schéma v1, intègre, protections d'origine exactes ; 1 entreprise réelle (logo), 1 salarié (matricule 181159983, embauche 01/07/2026), 1 version de paramètres (2000-01, défaut), 3 paies juillet–septembre 2026 **calculées, non clôturées**, 0 PDF, 9 entrées de journal. Acceptée par `migrate_paie_bulletins.py` (simulation) ; recalcul des 3 paies identique chaîne par chaîne. Points : sauvegarde possiblement ancienne (à refaire si activité après le 27/10) ; matricule ezzinecdi présumé 181159983 (à confirmer).
 
+- **US-05 (22/11/2026), pièces complémentaires analysées** (copies, lecture seule, non versionnées) : 4 bulletins PDF `bulletin_2026-07…10_181159983.pdf` — **clôturés le 06/11/2026**, version 1, jeu de paramètres n° 1, net 7 000,00 chacun ; `recapitulatif_paie_2026 (2).xlsx` — 4 paies clôturées juillet–octobre, cumuls 2026 : brut 29 466,04, net 28 000,00. **Le noyau gelé, à partir des saisies de la sauvegarde .db, refait le texte des 4 bulletins à l'identique** (hors date d'édition ; octobre = même saisie que septembre). Conclusion : la sauvegarde .db du 27/10 est **antérieure** à l'état réel (juillet–octobre clôturés le 06/11, PDF archivés). `data.json` d'ezzinecdi : introuvable selon le propriétaire.
+
 ## Actions reportées
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
