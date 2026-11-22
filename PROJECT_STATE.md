@@ -3,7 +3,7 @@
 | Champ | Valeur |
 |---|---|
 | Sprint courant | S5 — Sauvegarde et migration **terminé** — tag `sprint-S5` |
-| Prochaine action autorisée | Dépôt des sources réelles (US-05), essai à blanc réel, validation du rapport de dry-run par le propriétaire, puis « go S6 » |
+| Prochaine action autorisée | Validation du rapport d'essai à blanc réel par le propriétaire, puis « go S6 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
@@ -20,6 +20,10 @@
 - **Q4** : US-05 reste Bloqué jusqu'au dépôt des fichiers et du matricule ; ne bloque pas S1.
 - **Q5 — FAIT** : `docs/reference/` (diagnostics 1–3, conception, maquettes) versionné.
 - **Alerte ezzinecdi** : traitée par le propriétaire. **La référence gelée reste celle de `upstream/` et de `upstream/MANIFEST.sha256`, même si l'historique GitHub d'ezzinecdi est réécrit** (le commit `85354c9c…` pourra ne plus exister sur GitHub).
+
+- **Reprise des données — DÉCISIONS VALIDÉES (22/11/2026)** :
+  - data.json d'ezzinecdi PERDU (application en stockage local sans [gdrive], disque éphémère Streamlit). Trésorerie **reconstituée sur déclaration** du propriétaire : juillet → novembre 2026 (embauche 01/07/2026), plan 2 500 / 1 500 / 2 500 / 2 000 ; payés : tous les versements de juillet à octobre, et 1er + CNSS + 2e de novembre ; 3e de novembre (30/11) à venir ; date de paiement = date d'échéance (« Payé – à temps ») avec mention « reconstitué sur déclaration du propriétaire du 22/11/2026 ». Fichier : `migration/sources/data_reconstitue_20261122.json` (+ provenance), généré par `scripts/reconstituer_ezzinecdi.py` (fonctions d'origine).
+  - Paie : import de la sauvegarde du 27/10 puis **reclôture dans HBN Paie** (juillet–septembre recalculés si nécessaire selon la procédure d'origine puis clôturés ; octobre créé avec la saisie de septembre et clôturé). Les 4 PDF d'origine (clôturés le 06/11/2026) sont archivés comme **référence** (`migration/sources/reference/`, SHA256SUMS).
 
 ## Faits vérifiés (21/11/2026)
 - DNS `paie.hbnfactory.cloud` → 2.25.6.153 = IP du VPS (local, 1.1.1.1, 8.8.8.8).
@@ -42,6 +46,8 @@
 - **US-05 (22/11/2026), source (a) reçue** : `migration/sources/paie_20261027_003333_147569_manuelle.db` (0600, 94 208 octets, SHA-256 `18adadc1d55f6397221e8160d86e373fdce91cd91d9eaa7f90b06dc539ecfef0`). Sauvegarde paie-bulletins du 27/10/2026 00:33 : schéma v1, intègre, protections d'origine exactes ; 1 entreprise réelle (logo), 1 salarié (matricule 181159983, embauche 01/07/2026), 1 version de paramètres (2000-01, défaut), 3 paies juillet–septembre 2026 **calculées, non clôturées**, 0 PDF, 9 entrées de journal. Acceptée par `migrate_paie_bulletins.py` (simulation) ; recalcul des 3 paies identique chaîne par chaîne. Points : sauvegarde possiblement ancienne (à refaire si activité après le 27/10) ; matricule ezzinecdi présumé 181159983 (à confirmer).
 
 - **US-05 (22/11/2026), pièces complémentaires analysées** (copies, lecture seule, non versionnées) : 4 bulletins PDF `bulletin_2026-07…10_181159983.pdf` — **clôturés le 06/11/2026**, version 1, jeu de paramètres n° 1, net 7 000,00 chacun ; `recapitulatif_paie_2026 (2).xlsx` — 4 paies clôturées juillet–octobre, cumuls 2026 : brut 29 466,04, net 28 000,00. **Le noyau gelé, à partir des saisies de la sauvegarde .db, refait le texte des 4 bulletins à l'identique** (hors date d'édition ; octobre = même saisie que septembre). Conclusion : la sauvegarde .db du 27/10 est **antérieure** à l'état réel (juillet–octobre clôturés le 06/11, PDF archivés). `data.json` d'ezzinecdi : introuvable selon le propriétaire.
+
+- **Essai à blanc RÉEL (22/11/2026)** : sources du propriétaire (copies, originaux inchangés), deux exécutions identiques. Paie : 1 entreprise, 1 salarié, 1 version de paramètres, 3 paies importées à l'identique ; reclôture → 4 paies clôturées (net 7 000 chacune), 4 bulletins dont le **texte est identique aux PDF d'origine** (hors dates de clôture et d'édition). Trésorerie : 20 échéances importées (19 payées, 1 à venir), 0 correction, 0 rejet. Rapport complet (matricule masqué) hors dépôt : `/opt/hbnfactory/platforms/paie/migration/rapports/S5_MIGRATION_DRYRUN_REEL.md` (0600).
 
 ## Actions reportées
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.

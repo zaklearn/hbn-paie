@@ -9,7 +9,7 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-02 | Fait — remplacée par la décision Q1 : MySQL dédié `paie-db` (8.4), aucun compte à déposer ; test de connexion reporté au MySQL de dev (S1) |
 | US-03 | Fait (local) ; push en attente de la clé de déploiement (Q2) |
 | US-04 | Fait en Python 3.14 ; remesure en 3.12 dans `hbn-paie-dev` au début de S1 (Q3) |
-| US-05 | En cours : (a) .db reçue le 22/11 (inventoriée) ; (b) data.json + backup_*.json, (c) classeur Excel et confirmation du matricule (d) en attente |
+| US-05 | Fait : (a) .db du 27/10 + 4 bulletins de référence ; (b) data.json perdu → reconstitué sur déclaration ; (c) classeur Excel non disponible ; (d) matricule 181159983 |
 | US-10 | Fait |
 | US-11 | Fait |
 | US-12 | Fait (`test_pdf.py` porté en S2 : 9/9) |
@@ -37,7 +37,7 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-50 | Fait |
 | US-51 | Fait |
 | US-52 | Fait |
-| US-53 | Fait sur sources de substitution ; à rejouer sur les fichiers réels (US-05) |
+| US-53 | Fait (substitution) ; essai réel rejouable fait le 22/11 (rapport hors dépôt), à valider |
 | US-60 à US-64 | À faire |
 
 ## E0 — Cadrage (S0)

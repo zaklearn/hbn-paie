@@ -34,6 +34,7 @@ from tests.migration.sources import make_ezzinecdi, make_paie_db  # noqa: E402
 from tests.paie.mysql_db import Database  # noqa: E402
 
 TODAY = dt.date(2026, 11, 21)          # date de référence figée : rapport rejouable à l'identique
+REPRISE: dict | None = None            # reclôture dans HBN Paie (option --reprise), décision du 22/11/2026
 
 
 def sha(path: Path) -> str:
@@ -44,8 +45,12 @@ def find_sources(directory: Path | None) -> tuple[str, Path, Path, list[Path]]:
     if directory and directory.is_dir():
         dbs = sorted(directory.glob("*.db"))
         data = directory / "data.json"
+        if not data.is_file():
+            rebuilt = sorted(directory.glob("data_reconstitue_*.json"))
+            data = rebuilt[-1] if rebuilt else data
         if dbs and data.is_file():
-            return "propriétaire", dbs[0], data, sorted(directory.glob("backup_*.json"))
+            kind = "propriétaire" if data.name == "data.json" else "propriétaire (data.json reconstitué sur déclaration)"
+            return kind, dbs[0], data, sorted(directory.glob("backup_*.json"))
     tmp = Path(tempfile.mkdtemp(prefix="hbn-substitution-"))
     data, backup = make_ezzinecdi(tmp)
     return "substitution", make_paie_db(tmp), data, [backup]
@@ -59,6 +64,11 @@ def one_run(label: str, db_file: Path, data: Path, backups: list[Path], matricul
     pb = paie_bulletins.run(db_file, db, dry_run=False)
     ez = ezzinecdi.run(data, matricule, db, dry_run=False, backups=backups, today=TODAY)
     check_database_protections(db)
+    reprise, comparaison = None, None
+    if REPRISE:
+        from app.migration import reprise_paie
+        reprise = reprise_paie.reclose(db, matricule, REPRISE["year"], REPRISE["months"], REPRISE["copy"])
+        comparaison = reprise_paie.compare_with_references(db, matricule, REPRISE["year"], REPRISE["references"])
     conn = db.connect()
     try:
         target_counts = {t: conn.execute(f"SELECT COUNT(*) AS n FROM {t}").fetchone()["n"]
@@ -76,7 +86,8 @@ def one_run(label: str, db_file: Path, data: Path, backups: list[Path], matricul
         report.pop("cible_avant", None)
     params = [ps.valid_from for ps in master_data.list_parameter_sets(db)]
     return {"pb_dry": pb_dry, "ez_dry": ez_dry, "pb": pb, "ez": {k: v for k, v in ez.items() if k != "employee_id"},
-            "target_counts": target_counts, "echeances_par_mois": dict(sorted(months.items())), "parametres": params}
+            "target_counts": target_counts, "echeances_par_mois": dict(sorted(months.items())), "parametres": params,
+            "reprise": reprise, "comparaison": comparaison}
 
 
 def fmt(v) -> str:
@@ -147,13 +158,31 @@ def markdown(kind: str, hashes: dict, run: dict, identical: bool) -> str:
         L.append(f"- `{b['fichier']}` comparé à data.json : {b['enregistrements']} enregistrements, seulement dans "
                  f"data.json {b['seulement_dans_data_json']}, seulement dans le backup {b['seulement_dans_backup']}, "
                  f"différents {len(b['differents'])}.")
+    if run.get("reprise"):
+        L += ["", "## 7 bis. Reprise de paie par reclôture dans HBN Paie (décision du 22/11/2026)",
+              "| Période | Action | Version | Net à payer |", "|---|---|---|---|"]
+        for s in run["reprise"]:
+            L.append(f"| {s['periode']} | {s['action']} | {s.get('version', '')} | {s.get('net_a_payer', '')} |")
+        L += ["", "Comparaison du texte de chaque bulletin produit avec le PDF d'origine (hors « Paie clôturée le … » "
+              "et « édité le … ») :", "", "| Bulletin d'origine | Identique | Lignes | SHA-256 d'origine (archivé) |",
+              "|---|---|---|---|"]
+        for c in run["comparaison"]:
+            L.append(f"| `{c['reference']}` | {'oui' if c['identique'] else 'NON'} | {c.get('lignes', '')} "
+                     f"({c.get('lignes_differentes', '?')} différente(s)) | `{c.get('sha256_reference', '')}` |")
     L += ["", "## 8. Simulation (--dry-run) : aucune écriture",
           f"Simulation paie-bulletins : cible inchangée ; rapport de simulation identique au rapport d'import sur "
           f"les contrôles source (R0.3, PDF, totaux) : {'oui' if dry['r0_recalcul'] == r0 and dry['pdf'] == pb['pdf'] and dry['totaux_par_mois'] == pb['totaux_par_mois'] else 'NON'}.",
-          "", "## 9. Points soumis au propriétaire",
-          "1. Déposer la sauvegarde .db, data.json + backup_*.json et le matricule : l'essai sera rejoué sur ces copies.",
-          "2. Valider les éventuelles corrections proposées par la réconciliation (aucune n'est appliquée).",
-          "3. Les enregistrements non importés (hors schéma, doublon écarté, incohérence) restent à arbitrer.", ""]
+          "", "## 9. Points soumis au propriétaire"]
+    if kind == "substitution":
+        L += ["1. Déposer la sauvegarde .db, data.json + backup_*.json et le matricule : l'essai sera rejoué sur ces copies.",
+              "2. Valider les éventuelles corrections proposées par la réconciliation (aucune n'est appliquée).",
+              "3. Les enregistrements non importés (hors schéma, doublon écarté, incohérence) restent à arbitrer.", ""]
+    else:
+        L += ["1. Valider ce rapport (décomptes, totaux, plan v1, échéances reconstituées) avant l'import réel (S6, étape D).",
+              "2. Paie : valider la reprise par reclôture (texte des bulletins identique aux PDF d'origine, seules les dates "
+              "de clôture et d'édition changent ; PDF d'origine archivés comme référence).",
+              f"3. Corrections proposées : {len(ez['simulation']['corrections'])} ; non importés : "
+              f"{len(ez['rejetes']) + len(ez['doublons_ecartes']) + len(ez['incoherences'])}.", ""]
     return "\n".join(L)
 
 
@@ -162,8 +191,16 @@ def main() -> int:
     p.add_argument("--sources", type=Path)
     p.add_argument("--matricule", default="0001")
     p.add_argument("--out", type=Path, default=ROOT / "docs/sprints/S5_MIGRATION_DRYRUN.md")
+    p.add_argument("--reprise", help="AAAA:mois,…:mois_cree=mois_source (ex. 2026:7,8,9,10:10=9)")
+    p.add_argument("--masquer", action="store_true", help="masque le matricule dans le rapport")
     a = p.parse_args()
+    global REPRISE
     kind, db_file, data, backups = find_sources(a.sources)
+    if a.reprise:
+        year, months, copy = a.reprise.split(":")
+        REPRISE = {"year": int(year), "months": [int(m) for m in months.split(",")],
+                   "copy": {int(k): int(v) for k, v in (c.split("=") for c in copy.split(",") if c)},
+                   "references": sorted((a.sources / "reference").glob("bulletin_*.pdf")) if a.sources else []}
     originals = [db_file, data, *backups]
     before = {f.name: sha(f) for f in originals}
     with tempfile.TemporaryDirectory(prefix="hbn-migration-") as tmp:
@@ -177,7 +214,10 @@ def main() -> int:
     after = {f.name: sha(f) for f in originals}
     identical = json.dumps(runs[0], sort_keys=True, default=str) == json.dumps(runs[1], sort_keys=True, default=str)
     hashes = {n: (before[n], after[n]) for n in before}
-    a.out.write_text(markdown(kind, hashes, runs[0], identical), encoding="utf-8")
+    text = markdown(kind, hashes, runs[0], identical)
+    if a.masquer:
+        text = text.replace(a.matricule, "•" * (len(a.matricule) - 4) + a.matricule[-4:])
+    a.out.write_text(text, encoding="utf-8")
     print(f"rapport : {a.out} ; rejouable : {identical} ; originaux inchangés : {before == after}")
     from tests.paie import mysql_db                       # bases de dev de l'essai supprimées
 
