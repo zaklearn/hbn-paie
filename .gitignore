@@ -1,7 +1,8 @@
 # HBN Paie — jamais versionnés (R4, R7)
 .env*
-data/
-migration/
+/data/
+backend/data/
+/migration/
 *.db
 secrets/
 # environnements locaux
