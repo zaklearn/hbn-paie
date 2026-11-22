@@ -14,4 +14,5 @@ def test_health_ok():
 def test_api_health_reports_db_state():
     body = TestClient(create_app()).get("/api/health").json()
     assert body["status"] == "ok"
+    assert body["version"] == "1.0.0"
     assert body["db"] in {"ok", "non_configuree", "injoignable", "erreur"}
