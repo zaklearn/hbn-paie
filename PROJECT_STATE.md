@@ -2,8 +2,8 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S5 — Sauvegarde et migration **terminé** — tag `sprint-S5` |
-| Prochaine action autorisée | Validation du rapport d'essai à blanc réel par le propriétaire, puis « go S6 » |
+| Sprint courant | S6 — déploiement : A–D faits, E en cours (recette du propriétaire) ; **https://paie.hbnfactory.cloud en service** |
+| Prochaine action autorisée | Recette par le propriétaire (`docs/sprints/S6_RECETTE.md`), puis tag `v1.0.0` |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
@@ -48,6 +48,8 @@
 - **US-05 (22/11/2026), pièces complémentaires analysées** (copies, lecture seule, non versionnées) : 4 bulletins PDF `bulletin_2026-07…10_181159983.pdf` — **clôturés le 06/11/2026**, version 1, jeu de paramètres n° 1, net 7 000,00 chacun ; `recapitulatif_paie_2026 (2).xlsx` — 4 paies clôturées juillet–octobre, cumuls 2026 : brut 29 466,04, net 28 000,00. **Le noyau gelé, à partir des saisies de la sauvegarde .db, refait le texte des 4 bulletins à l'identique** (hors date d'édition ; octobre = même saisie que septembre). Conclusion : la sauvegarde .db du 27/10 est **antérieure** à l'état réel (juillet–octobre clôturés le 06/11, PDF archivés). `data.json` d'ezzinecdi : introuvable selon le propriétaire.
 
 - **Essai à blanc RÉEL (22/11/2026)** : sources du propriétaire (copies, originaux inchangés), deux exécutions identiques. Paie : 1 entreprise, 1 salarié, 1 version de paramètres, 3 paies importées à l'identique ; reclôture → 4 paies clôturées (net 7 000 chacune), 4 bulletins dont le **texte est identique aux PDF d'origine** (hors dates de clôture et d'édition). Trésorerie : 20 échéances importées (19 payées, 1 à venir), 0 correction, 0 rejet. Rapport complet (matricule masqué) hors dépôt : `/opt/hbnfactory/platforms/paie/migration/rapports/S5_MIGRATION_DRYRUN_REEL.md` (0600).
+
+- **S6 (22/11/2026)** : image `hbn-paie:cc896555c9d7` (test d'intégrité bloquant au build) ; plateforme `/opt/hbnfactory/platforms/paie` (paie 512m + paie-db MySQL 8.4.13 dédié 384m, sans port, `paie-internal`) ; base `paie`, `paie_app` limité à `paie.*` ; route Traefik `paie.hbnfactory.cloud` (LE production) ; superadmin `zak` ; import réel + reprise : 4 paies clôturées (texte identique aux PDF d'origine), 20 échéances ; R0.3 production 0 écart ; sauvegarde de production restaurée avec succès sur dev. Mémoire au repos 107 + 216 Mio.
 
 ## Actions reportées
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.

@@ -1,5 +1,11 @@
 # Changelog — HBN Paie
 
+## S6 — Déploiement et reprise réelle (22/11/2026)
+- Dockerfile multi-stage (SPA, test d'intégrité du noyau bloquant, runtime non root), compose de production, gen-env.sh.
+- Mise en service https://paie.hbnfactory.cloud (Traefik, LE), MySQL dédié paie-db, superadmin.
+- Import réel (paie-bulletins + trésorerie reconstituée) et reprise par reclôture ; R0.3 0 écart.
+- Sauvegarde de production testée ; docs/EXPLOITATION.md ; checklist de recette S6_RECETTE.md.
+
 ## S5 — Sauvegarde, restauration et migration (22/11/2026, tag `sprint-S5`)
 - Sauvegarde/restauration de la base paie : fichier .zip avec manifeste, validation avant action, sauvegarde de sécurité, CLI, API, écran.
 - Outil de migration paie-bulletins (.db) : import à l'identique, ids conservés, R0.3 en lecture seule.
