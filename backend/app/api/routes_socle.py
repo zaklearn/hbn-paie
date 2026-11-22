@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from pydantic import BaseModel, Field
 
@@ -92,3 +95,51 @@ def set_password(user_id: int, body: PasswordIn, admin: users.User = Depends(sup
                  db: Database = Depends(get_db)) -> dict:
     users.set_password(db, admin.actor, user_id, body.password)
     return {"ok": True}
+
+
+# --- Sauvegardes (S5 / US-50) : superadmin ---------------------------------------------------
+BACKUP_NAME = re.compile(r"^paie_\d{8}_\d{6}_\d{6}_[a-z_]+\.zip$")
+MAX_RESTORE_BYTES = 512 * 1024 * 1024
+
+
+def _backup_dir() -> Path:
+    return Path(get_settings().backup_dir)
+
+
+@router.get("/api/socle/sauvegardes")
+def list_backups(_: users.User = Depends(superadmin)) -> list[dict]:
+    from app.socle import backup
+
+    return [{"name": p.name, "size": p.stat().st_size} for p in backup.list_backups(_backup_dir())]
+
+
+@router.post("/api/socle/sauvegardes", status_code=201)
+def create_backup(admin: users.User = Depends(superadmin), db: Database = Depends(get_db)) -> dict:
+    from app.socle import backup
+
+    path = backup.create_backup(db, _backup_dir(), admin.actor, "manuelle", get_settings().backup_retention)
+    return {"name": path.name, "size": path.stat().st_size}
+
+
+@router.get("/api/socle/sauvegardes/{name}")
+def download_backup(name: str, _: users.User = Depends(superadmin)) -> Response:
+    path = _backup_dir() / name
+    if not BACKUP_NAME.match(name) or not path.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Sauvegarde introuvable.")
+    return Response(path.read_bytes(), media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{name}"'})
+
+
+@router.post("/api/socle/sauvegardes/restauration")
+async def restore_backup(request: Request, admin: users.User = Depends(superadmin),
+                         db: Database = Depends(get_db)) -> dict:
+    """Remplace TOUTE la base (corps : fichier .zip). Validation, puis sauvegarde de sécurité automatique."""
+    from starlette.concurrency import run_in_threadpool
+
+    from app.socle import backup
+
+    content = await request.body()
+    if not content or len(content) > MAX_RESTORE_BYTES:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Fichier de sauvegarde absent ou trop volumineux.")
+    safety = await run_in_threadpool(backup.restore_backup, db, content, _backup_dir(), admin.actor)
+    return {"safety": safety.name, "message": "Base restaurée ; toutes les sessions sont fermées."}

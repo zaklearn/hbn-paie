@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Sauvegarde de la base paie (S5 / US-50). Exemple : scripts/paie-backup backup --label quotidienne
+cd "$(dirname "$0")/../backend" 2>/dev/null || cd /app
+exec python -m app.socle.backup_cli "$@"

@@ -44,9 +44,8 @@ SPECIFIC: dict[str, list[tuple[bytes, bytes, int, str]]] = {
          "Database(chemin) -> base MySQL de test"),
         (b"from app.paie.services import auth, backup, demo, master_data, payroll, reporting",
          b"from app.paie.services import demo, master_data, payroll, reporting\n"
-         b"from app.socle import auth\n"
-         b"from tests.paie import backup_s5 as backup  # sauvegarde/restauration : portee en S5 (US-50)", 1,
-         "auth.py est dans le socle ; backup.py (SQLite) est porté en S5 : ses 2 tests sont ignorés avec motif"),
+         b"from app.socle import auth, backup  # portage : auth et sauvegarde (MySQL, S5) dans le socle", 1,
+         "auth.py et backup.py (version MySQL, S5 / US-50, même interface) sont dans le socle"),
     ],
 }
 

@@ -2,7 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
-import { errorMessage, http } from '@/shared/services/http'
+import { download, errorMessage, http } from '@/shared/services/http'
 import { MOIS_FR } from '@/shared/format'
 import type { Issue } from '@/shared/types'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
@@ -113,6 +113,26 @@ async function savePassword() {
   await userAction(pwdFor.value, 'mot-de-passe', { password: newPwd.value }, 'Mot de passe changé ; sessions du compte fermées.')
   pwdFor.value = null; newPwd.value = ''
 }
+const backups = ref<{ name: string; size: number }[]>([])
+const restoreFile = ref<File | null>(null)
+async function loadBackups() { backups.value = (await http.get('/api/socle/sauvegardes')).data }
+async function createBackup() {
+  busy.value = true
+  try { const r = await http.post('/api/socle/sauvegardes'); ui.notify(`Sauvegarde créée : ${r.data.name}`); await loadBackups() }
+  catch (e) { ui.notify(errorMessage(e), 'erreur') } finally { busy.value = false }
+}
+function pickRestore(ev: Event) { restoreFile.value = (ev.target as HTMLInputElement).files?.[0] ?? null; (ev.target as HTMLInputElement).value = '' }
+async function confirmRestore() {
+  if (!restoreFile.value) return
+  busy.value = true
+  try {
+    const r = await http.post('/api/socle/sauvegardes/restauration', await restoreFile.value.arrayBuffer(),
+      { headers: { 'Content-Type': 'application/zip' }, timeout: 600_000 })
+    restoreFile.value = null
+    ui.notify(`${r.data.message} Sauvegarde de sécurité : ${r.data.safety}`)
+    await auth.fetchMe()
+  } catch (e) { ui.notify(errorMessage(e), 'erreur') } finally { busy.value = false }
+}
 const audit = ref<Record<string, string>[]>([])
 const auditAction = ref('')
 
@@ -123,6 +143,7 @@ watch(tab, async (t) => {
     if (t === 'parametres') await loadParams()
     if (t === 'gabarit') gabarit.value = (await http.get('/api/tresorerie/gabarit')).data
     if (t === 'utilisateurs') await loadUsers()
+    if (t === 'sauvegardes' && auth.isAdmin) await loadBackups()
     if (t === 'journal') audit.value = (await http.get('/api/paie/audit', { params: { limit: 500, action: auditAction.value || undefined } })).data
   } catch (e) { ui.notify(errorMessage(e), 'erreur') }
 }, { immediate: true })
@@ -195,9 +216,23 @@ watch(tab, async (t) => {
       </form>
     </template>
 
-    <section v-if="tab === 'sauvegardes'" class="carte p-5 text-sm text-attenue">
-      Sauvegarde et restauration de la base <code>paie</code> : livrées au sprint S5 (US-50), avec validation du fichier et sauvegarde automatique avant toute restauration.
-    </section>
+    <template v-if="tab === 'sauvegardes' && auth.isAdmin">
+      <div class="flex flex-wrap items-center gap-3">
+        <button type="button" class="btn-primaire" :disabled="busy" data-testid="creer-sauvegarde" @click="createBackup">Créer une sauvegarde</button>
+        <label class="btn-contour cursor-pointer">Restaurer depuis un fichier…<input type="file" accept=".zip" class="sr-only" @change="pickRestore"></label>
+      </div>
+      <p class="m-0 text-[13px] text-attenue">Sauvegarde complète : base, paramètres, comptes, journal et bulletins PDF archivés. Toute restauration est précédée d'une sauvegarde automatique ; le fichier est vérifié (empreintes, protections, unicités, références) avant toute modification.</p>
+      <section class="carte overflow-x-auto">
+        <table class="w-full min-w-[480px] border-collapse">
+          <thead><tr><th class="th">Fichier</th><th class="th text-right">Taille</th><th class="th"><span class="sr-only">Télécharger</span></th></tr></thead>
+          <tbody>
+            <tr v-for="b in backups" :key="b.name"><td class="td">{{ b.name }}</td><td class="td text-right chiffres">{{ b.size.toLocaleString('fr-FR') }} octets</td>
+              <td class="td text-right"><button type="button" class="btn-lien" @click="download(`/api/socle/sauvegardes/${b.name}`)">Télécharger</button></td></tr>
+            <tr v-if="!backups.length"><td class="td text-attenue" colspan="3">Aucune sauvegarde.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </template>
 
     <template v-if="tab === 'journal'">
       <label class="etiquette max-w-sm">Filtrer par action<input v-model="auditAction" class="champ" placeholder="ex. paie.cloture" @change="tab = 'entreprise'; tab = 'journal'"></label>
@@ -230,6 +265,10 @@ watch(tab, async (t) => {
           <input v-model="b.rate" class="champ chiffres" aria-label="Taux"><input v-model="b.deduction" class="champ chiffres" aria-label="Somme à déduire">
         </div>
       </div>
+    </ConfirmDialog>
+    <ConfirmDialog :open="!!restoreFile" title="Remplacer toute la base" confirm-label="Restaurer" :busy="busy"
+                   @cancel="restoreFile = null" @confirm="confirmRestore">
+      <p class="m-0 text-sm">Remplacement <strong>total</strong> de la base par <strong>{{ restoreFile?.name }}</strong>. Les données actuelles seront remplacées ; une sauvegarde de sécurité est créée d'abord. Toutes les sessions seront fermées.</p>
     </ConfirmDialog>
     <ConfirmDialog :open="!!pwdFor" title="Changer le mot de passe" :busy="busy" :disabled="newPwd.length < 10" @cancel="pwdFor = null" @confirm="savePassword">
       <label class="etiquette">Nouveau mot de passe pour {{ pwdFor?.username }}<input v-model="newPwd" type="password" autocomplete="new-password" class="champ"></label>

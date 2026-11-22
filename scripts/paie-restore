@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Restauration de la base paie (S5 / US-50) : validation, sauvegarde de sécurité, puis remplacement.
+cd "$(dirname "$0")/../backend" 2>/dev/null || cd /app
+exec python -m app.socle.backup_cli restore "$@"

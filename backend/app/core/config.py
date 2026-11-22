@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     auto_migrate: bool = True              # migrations au démarrage, comme l'original (db.migrate())
     cookie_secure: bool = True             # cookie de session « Secure » (HTTPS derrière Traefik)
     session_hours: int = 8
+    backup_dir: str = "data/backups"         # sauvegardes de la base paie (0700, fichiers 0600)
+    backup_retention: int = 0                # 0 = toutes conservées ; N = les N plus récentes
     static_dir: str | None = None          # dossier de la SPA construite (frontend/dist), servie à la racine
 
 

@@ -13,8 +13,7 @@ from app.paie.core.models.parameters import IRBracket
 from app.paie.core.models.payroll import MonthlyInput
 from tests.paie.mysql_db import Database  # portage MySQL : base de test neuve par chemin
 from app.paie.services import demo, master_data, payroll, reporting
-from app.socle import auth
-from tests.paie import backup_s5 as backup  # sauvegarde/restauration : portee en S5 (US-50)
+from app.socle import auth, backup  # portage : auth et sauvegarde (MySQL, S5) dans le socle
 from app.paie.services.errors import PayrollError
 from app.paie.core.validation.validators import (
     ERREUR, validate_bareme, validate_company, validate_employee, validate_monthly_input,
