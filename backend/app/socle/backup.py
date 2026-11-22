@@ -72,7 +72,7 @@ def _decode(value):
 def _columns(conn, table: str) -> list[str]:
     rows = conn.execute(
         "SELECT COLUMN_NAME AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() "
-        "AND TABLE_NAME = ? AND EXTRA NOT LIKE '%GENERATED%' ORDER BY ORDINAL_POSITION", (table,)).fetchall()
+        "AND TABLE_NAME = ? AND EXTRA NOT IN ('VIRTUAL GENERATED', 'STORED GENERATED') ORDER BY ORDINAL_POSITION", (table,)).fetchall()
     return [r["c"] for r in rows]
 
 

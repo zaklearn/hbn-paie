@@ -180,3 +180,18 @@ def test_retention_keeps_the_most_recent(seeded):
     for _ in range(3):
         backup.create_backup(db, tmp_path / "r", ACTOR, retention=2)
     assert len(backup.list_backups(tmp_path / "r")) == 2
+
+
+def test_every_stored_column_is_saved_and_restored(seeded):
+    """Toutes les colonnes stockées (y compris TEXT à valeur par défaut) ; seules les colonnes générées sont exclues."""
+    db, saved, tmp_path = seeded
+    manifest = json.loads(zipfile.ZipFile(saved).read("manifest.json"))["tables"]
+    assert {"adresse", "ville", "raison_sociale"} <= set(manifest["company"]["columns"])
+    assert {"prenom", "fonction", "banque", "adresse"} <= set(manifest["employees"]["columns"])
+    assert "cin_key" not in manifest["employees"]["columns"] and "open_key" not in manifest["payslips"]["columns"]
+    assert {"rectification_reason", "inputs", "result"} <= set(manifest["payslips"]["columns"])
+    from app.paie.services import master_data
+    company, employee = master_data.get_company(db), master_data.list_employees(db)[0]
+    backup.restore_backup(db, saved.read_bytes(), tmp_path / "backups", ACTOR)
+    assert master_data.get_company(db) == company and master_data.list_employees(db)[0] == employee
+    assert company.adresse == "12, rue de l'Exemple" and employee.prenom == "Salarié"
