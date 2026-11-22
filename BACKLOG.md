@@ -34,7 +34,11 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-43 | Fait |
 | US-44 | Fait |
 | US-45 | Fait (Sauvegardes → S5) |
-| US-50 à US-64 | À faire |
+| US-50 | Fait |
+| US-51 | Fait |
+| US-52 | Fait |
+| US-53 | Fait sur sources de substitution ; à rejouer sur les fichiers réels (US-05) |
+| US-60 à US-64 | À faire |
 
 ## E0 — Cadrage (S0)
 | ID | Story | CA |

@@ -1,5 +1,12 @@
 # Changelog — HBN Paie
 
+## S5 — Sauvegarde, restauration et migration (22/11/2026, tag `sprint-S5`)
+- Sauvegarde/restauration de la base paie : fichier .zip avec manifeste, validation avant action, sauvegarde de sécurité, CLI, API, écran.
+- Outil de migration paie-bulletins (.db) : import à l'identique, ids conservés, R0.3 en lecture seule.
+- Outil de migration ezzinecdi (data.json) : plan v1, simulation de la réconciliation, anomalies listées.
+- Essai à blanc rejouable (sources de substitution) : `docs/sprints/S5_MIGRATION_DRYRUN.md`.
+- Correctif : colonnes TEXT à valeur par défaut incluses dans les sauvegardes ; .gitignore limité aux dossiers de données.
+
 ## S4 — Interface Vue 3 (21/11/2026, tag `sprint-S4`)
 - SPA Vite + Vue 3 + TS + Pinia + Tailwind : menu 6 entrées, barre de contexte (période, salarié) dans l'URL, rôles.
 - Tableau de bord, Trésorerie (4 onglets, mobile), Paie du mois (étapes), Salariés (fiche à onglets), Bulletins & exports, Configuration.

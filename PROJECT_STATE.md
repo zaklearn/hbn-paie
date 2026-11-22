@@ -2,13 +2,14 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S4 — Interface Vue 3 **terminé** — tag `sprint-S4` |
-| Prochaine action autorisée | Aucune avant la validation du rapport S4 (`docs/sprints/S4_RAPPORT.md`) et le « go S5 » |
+| Sprint courant | S5 — Sauvegarde et migration **terminé** — tag `sprint-S5` |
+| Prochaine action autorisée | Dépôt des sources réelles (US-05), essai à blanc réel, validation du rapport de dry-run par le propriétaire, puis « go S6 » |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
 
 ## Décisions du propriétaire
+- **S4 (21/11/2026)** : écarts 1–4 validés (observation automatique, onglets en haut sur mobile, nets du mois = plans, taux en décimal exact).
 - **S3 (21/11/2026)** : écarts 1–6 validés (date de paiement saisie, régularisation −2/+2, CNSS en information, UID ICS, import/remplacement en S5, montants du gabarit au plan).
 - **S2 (21/11/2026)** : `PAIE_SEED_DEMO=0` par défaut validé ; scripts reset_production / supprimer_demo (Windows, SQLite) abandonnés.
 
@@ -36,10 +37,12 @@
 
 - **S4 (21/11/2026)** : SPA Vue 3 (6 menus, barre de contexte URL, StatusBadge commun, rôles), 5 écrans des maquettes, aucun calcul en JS (grep documenté), totaux du tableau de bord côté serveur ; Vitest 21, e2e Playwright 3 (parcours complet, 390 px, rôle user), captures dans `docs/sprints/S4_captures/` ; backend 269 + 3 ignorés.
 
+- **S5 (22/11/2026)** : sauvegarde/restauration (.zip, manifeste, validation avant action, sécurité, CLI/API/écran) ; outils `migrate_paie_bulletins.py` et `migrate_ezzinecdi.py` (simulation et import, ids conservés, R0.3) ; essai à blanc rejouable sur sources de substitution : 5 paies vérifiées, 0 écart ; suite 298 + 1 ignoré.
+
 ## Actions reportées
-- Sauvegarde/restauration (`backup.py` SQLite, 2 tests de `test_services_misc` + `test_backup_integrity`) → S5 (US-50).
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
 ## À confirmer
-- Validation S4 : observation automatique du paiement (pas de champ libre), onglets en haut sur mobile, « Salaires nets du mois » = total des plans, taux saisis en décimal exact ; push de `sprint-S4`.
+- Validation S5 : journal de la source ajouté à la suite sur une cible amorcée, règle du plan v1, échéances non importées à arbitrer, droits de structure de `paie_app` en S6 ; push de `sprint-S5`.
+- Essai à blanc RÉEL : `scripts/dev-migration-dryrun.sh --sources /opt/hbnfactory/platforms/paie/migration/sources --matricule <M>` dès le dépôt des fichiers.
 - Q4 : fichiers sources + matricule (US-05).
