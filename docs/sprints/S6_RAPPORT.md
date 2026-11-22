@@ -38,7 +38,10 @@
 | Disque | base 208 Mo ; sauvegarde complète 33 Ko ; 15 Go libres sur `/` |
 | Mémoire du VPS | 1,6 Go disponibles après mise en service |
 
-## Restant à faire pour la mise en service définitive (Definition of Done)
+## Mise en service
+**v1.0.0 — recette validée par le propriétaire le 22/11/2026.** Definition of Done atteinte : service en HTTPS, données réelles importées avec R0.3 à 0 écart, recette signée, sauvegarde de production testée, aucun impact sur Tangerine ni le portfolio.
+
+## (Historique) Restant à faire avant la recette
 1. **Recette par le propriétaire :** checklist R2 dans `docs/sprints/S6_RECETTE.md`, à signer. Le tag `v1.0.0` sera posé ensuite.
 2. **Bascule (US-64) :**
    - fait : applications Streamlit gelées par le propriétaire ;

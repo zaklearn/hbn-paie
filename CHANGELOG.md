@@ -1,5 +1,8 @@
 # Changelog — HBN Paie
 
+## v1.0.0 — Mise en service (22/11/2026)
+- Recette fonctionnelle (checklist R2) validée par le propriétaire.
+
 ## S6 — Déploiement et reprise réelle (22/11/2026)
 - Dockerfile multi-stage (SPA, test d'intégrité du noyau bloquant, runtime non root), compose de production, gen-env.sh.
 - Mise en service https://paie.hbnfactory.cloud (Traefik, LE), MySQL dédié paie-db, superadmin.

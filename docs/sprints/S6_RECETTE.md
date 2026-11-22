@@ -34,4 +34,4 @@ Cocher chaque ligne (OK / KO + remarque). Les actions de test marquées ↩ sont
 |---|---|---|---|
 | R1 | Versé / net, CNSS / cotisations (lecture seule) | Paie du mois 10/2026 : 7 000 / 7 000 ; CNSS 1 500 · cotisations 1 513,00 | |
 
-Signature du propriétaire : ____________________ Date : ____/____/2026
+**Recette validée par le propriétaire (Zakaria Benhoumad) le 22/11/2026 : « Recette OK, tag v1.0.0 » (validation écrite dans la session Claude Code).**

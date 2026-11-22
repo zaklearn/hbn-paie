@@ -2,8 +2,8 @@
 
 | Champ | Valeur |
 |---|---|
-| Sprint courant | S6 — déploiement : A–D faits, E en cours (recette du propriétaire) ; **https://paie.hbnfactory.cloud en service** |
-| Prochaine action autorisée | Recette par le propriétaire (`docs/sprints/S6_RECETTE.md`), puis tag `v1.0.0` |
+| Sprint courant | **v1.0.0 en service** (22/11/2026) — https://paie.hbnfactory.cloud ; recette signée ; sprints S0–S6 terminés |
+| Prochaine action autorisée | Aucune : toute évolution passe par un nouveau sprint validé par le propriétaire |
 
 ## Décisions validées
 - Conception v2.1 (D1–D9), `docs/reference/PAIE_FUSION_CONCEPTION.md` ; cadre R0–R9, `docs/claude-code/00_CADRE_COMMUN.md`.
@@ -51,10 +51,17 @@
 
 - **S6 (22/11/2026)** : image `hbn-paie:cc896555c9d7` (test d'intégrité bloquant au build) ; plateforme `/opt/hbnfactory/platforms/paie` (paie 512m + paie-db MySQL 8.4.13 dédié 384m, sans port, `paie-internal`) ; base `paie`, `paie_app` limité à `paie.*` ; route Traefik `paie.hbnfactory.cloud` (LE production) ; superadmin `zak` ; import réel + reprise : 4 paies clôturées (texte identique aux PDF d'origine), 20 échéances ; R0.3 production 0 écart ; sauvegarde de production restaurée avec succès sur dev. Mémoire au repos 107 + 216 Mio.
 
+- **Mise en service v1.0.0 (22/11/2026)** : recette R2 validée par le propriétaire (« Recette OK, tag v1.0.0 »).
+
 ## Actions reportées
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
-## À confirmer
-- Validation S5 : journal de la source ajouté à la suite sur une cible amorcée, règle du plan v1, échéances non importées à arbitrer, droits de structure de `paie_app` en S6 ; push de `sprint-S5`.
+## À confirmer (après v1.0.0, hors périmètre de la mise en service)
+- Journal binaire MySQL désactivé (`--disable-log-bin`) : à confirmer.
+- `root@%` dans `paie-db` (joignable seulement depuis `paie-internal`) : restriction à `localhost` possible (L3).
+- Ajout de `paie` à `hbn-check.sh` (monitoring HBNFACTORY) : à décider.
+- Requêtes `HEAD` sur la SPA (réponse JSON) : à corriger si une sonde les utilise.
+
+### Historique des points à confirmer
 - Essai à blanc RÉEL : `scripts/dev-migration-dryrun.sh --sources /opt/hbnfactory/platforms/paie/migration/sources --matricule <M>` dès le dépôt des fichiers.
 - Q4 / US-05 : data.json + backup_*.json (b), classeur Excel (c), confirmation du matricule 181159983 (d) ; éventuelle sauvegarde .db plus récente.

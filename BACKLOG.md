@@ -40,9 +40,9 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-53 | Fait (substitution) ; essai réel rejouable fait le 22/11 (rapport hors dépôt), à valider |
 | US-60 | Fait |
 | US-61 | Fait (L3, 22/11) |
-| US-62 | Fait (L3, 22/11) — validation écrite du rapport de production attendue |
-| US-63 | En cours : recette du propriétaire (S6_RECETTE.md) ; mesures faites |
-| US-64 | En cours : Streamlit gelées ; tag v1.0.0 après recette signée |
+| US-62 | Fait (L3, 22/11) — validé par le propriétaire |
+| US-63 | Fait — recette signée le 22/11 ; mesures faites |
+| US-64 | Fait — mise en service v1.0.0, Streamlit gelées |
 
 ## E0 — Cadrage (S0)
 | ID | Story | CA |
