@@ -9,7 +9,7 @@ Version 1.0 · 21/11/2026 · Priorité = ordre des sprints. CA = critère d'acce
 | US-02 | Fait — remplacée par la décision Q1 : MySQL dédié `paie-db` (8.4), aucun compte à déposer ; test de connexion reporté au MySQL de dev (S1) |
 | US-03 | Fait (local) ; push en attente de la clé de déploiement (Q2) |
 | US-04 | Fait en Python 3.14 ; remesure en 3.12 dans `hbn-paie-dev` au début de S1 (Q3) |
-| US-05 | Bloqué (fichiers sources et matricule à déposer par le propriétaire — Q4) ; ne bloque pas S1 |
+| US-05 | En cours : (a) .db reçue le 22/11 (inventoriée) ; (b) data.json + backup_*.json, (c) classeur Excel et confirmation du matricule (d) en attente |
 | US-10 | Fait |
 | US-11 | Fait |
 | US-12 | Fait (`test_pdf.py` porté en S2 : 9/9) |

@@ -39,10 +39,12 @@
 
 - **S5 (22/11/2026)** : sauvegarde/restauration (.zip, manifeste, validation avant action, sécurité, CLI/API/écran) ; outils `migrate_paie_bulletins.py` et `migrate_ezzinecdi.py` (simulation et import, ids conservés, R0.3) ; essai à blanc rejouable sur sources de substitution : 5 paies vérifiées, 0 écart ; suite 298 + 1 ignoré.
 
+- **US-05 (22/11/2026), source (a) reçue** : `migration/sources/paie_20261027_003333_147569_manuelle.db` (0600, 94 208 octets, SHA-256 `18adadc1d55f6397221e8160d86e373fdce91cd91d9eaa7f90b06dc539ecfef0`). Sauvegarde paie-bulletins du 27/10/2026 00:33 : schéma v1, intègre, protections d'origine exactes ; 1 entreprise réelle (logo), 1 salarié (matricule 181159983, embauche 01/07/2026), 1 version de paramètres (2000-01, défaut), 3 paies juillet–septembre 2026 **calculées, non clôturées**, 0 PDF, 9 entrées de journal. Acceptée par `migrate_paie_bulletins.py` (simulation) ; recalcul des 3 paies identique chaîne par chaîne. Points : sauvegarde possiblement ancienne (à refaire si activité après le 27/10) ; matricule ezzinecdi présumé 181159983 (à confirmer).
+
 ## Actions reportées
 - Déclencheurs en production par un compte non root : `log_bin_trust_function_creators` ou binlog désactivé sur `paie-db` → S6.
 
 ## À confirmer
 - Validation S5 : journal de la source ajouté à la suite sur une cible amorcée, règle du plan v1, échéances non importées à arbitrer, droits de structure de `paie_app` en S6 ; push de `sprint-S5`.
 - Essai à blanc RÉEL : `scripts/dev-migration-dryrun.sh --sources /opt/hbnfactory/platforms/paie/migration/sources --matricule <M>` dès le dépôt des fichiers.
-- Q4 : fichiers sources + matricule (US-05).
+- Q4 / US-05 : data.json + backup_*.json (b), classeur Excel (c), confirmation du matricule 181159983 (d) ; éventuelle sauvegarde .db plus récente.
