@@ -61,6 +61,7 @@
 - `root@%` dans `paie-db` (joignable seulement depuis `paie-internal`) : restriction à `localhost` possible (L3).
 - Ajout de `paie` à `hbn-check.sh` (monitoring HBNFACTORY) : à décider.
 - Requêtes `HEAD` sur la SPA (réponse JSON) : à corriger si une sonde les utilise.
+- Fait le 22/11 : version 1.0.0 affichée (image `hbn-paie:3e3061a66f55`). Le tag `v1.0.0` (poussé) pointe sur le commit précédent, identique hors numéro de version.
 
 ### Historique des points à confirmer
 - Essai à blanc RÉEL : `scripts/dev-migration-dryrun.sh --sources /opt/hbnfactory/platforms/paie/migration/sources --matricule <M>` dès le dépôt des fichiers.

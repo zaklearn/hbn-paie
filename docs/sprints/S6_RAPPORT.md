@@ -18,6 +18,7 @@
 | 21:11 | D | **L3** | Import paie-bulletins (.db du 27/10) | 1 entreprise, 1 salarié, 1 version de paramètres, 3 paies, journal ; 0 écart |
 | 21:12 | D | **L3** | Import trésorerie (data.json reconstitué sur déclaration) | Plan v1, 20 échéances (19 payées), 0 correction, 0 rejet |
 | 21:12 | D | **L3** | Reprise (décision du 22/11) : juillet clôturé ; août et septembre recalculés puis clôturés ; octobre créé et clôturé | 4 paies clôturées, net 7 000 ; texte identique aux PDF d'origine 4/4 |
+| 21:21 | après recette | L2 | Version 1.0.0 affichée : image `hbn-paie:3e3061a66f55`, sauvegarde `…_avant_mise_a_jour.zip`, redéploiement de `paie` seul (EXPLOITATION §7) | Sain en 8 s ; `/api/health` → 1.0.0 ; données intactes (4 paies, 4 bulletins, 20 échéances) ; Tangerine et portfolio 200 |
 | 21:13 | E | L2 | Sauvegarde de production, puis restauration sur le MySQL de dev | `…_apres_import_production.zip` : tables identiques, protections recréées, 4 PDF intacts |
 
 **Détails des contrôles de l'étape C.**
