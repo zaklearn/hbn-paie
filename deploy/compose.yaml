@@ -1,0 +1,83 @@
+# =============================================================================
+# HBNFACTORY — Projet Compose de la plateforme HBN Paie (S6 / US-60) — v1.0
+# Cible : /opt/hbnfactory/platforms/paie/compose.yaml
+# Flux : Internet -> Traefik (443, TLS `le`) -> paie:8000 -> paie-db:3306 (réseau interne)
+# MySQL DÉDIÉ `paie-db` (décision Q1 du 21/11/2026, remplace D2) ; portfolio et `portfolio-internal` non touchés.
+# Secrets : .env (0600, généré par scripts/gen-env.sh, jamais affiché). Aucun port publié.
+# Redémarrage : `docker compose restart` — JAMAIS `down -v`.
+# =============================================================================
+name: hbn-paie
+
+services:
+  paie-db:
+    extends:
+      file: ../../core/compose/compose-defaults.yaml
+      service: hbn-mysql
+    image: ${DB_IMAGE:?image MySQL épinglée requise}
+    container_name: paie-db
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      - "--innodb-buffer-pool-size=128M"
+      - "--performance-schema=OFF"
+      - "--max-connections=30"
+      # Pas de journal binaire (aucune réplication ; sauvegardes applicatives) : permet aussi à paie_app
+      # de créer les déclencheurs d'immuabilité (migrations, restauration) sans privilège SUPER.
+      - "--disable-log-bin"
+    mem_reservation: 192m
+    mem_limit: 384m
+    memswap_limit: 512m
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: paie
+      MYSQL_USER: paie_app
+      MYSQL_PASSWORD: ${PAIE_DB_PASSWORD:?}
+    volumes:
+      - /opt/hbnfactory/platforms/paie/data/mysql:/var/lib/mysql
+    networks:
+      - paie-internal
+    # AUCUN `ports:` — la base n'est jamais publiée sur l'hôte
+
+  paie:
+    extends:
+      file: ../../core/compose/compose-defaults.yaml
+      service: hbn-base
+    image: ${PAIE_IMAGE:?image HBN Paie requise}
+    container_name: paie
+    depends_on:
+      paie-db:
+        condition: service_healthy
+    mem_reservation: 128m
+    mem_limit: 512m
+    memswap_limit: 512m
+    environment:
+      PAIE_ENV: prod
+      PAIE_DB_URL: "mysql+pymysql://paie_app:${PAIE_DB_PASSWORD:?}@paie-db:3306/paie?charset=utf8mb4"
+      PAIE_SECRET_KEY: ${PAIE_SECRET_KEY:?}
+      PAIE_SEED_DEMO: "false"
+      PAIE_AUTO_MIGRATE: "true"
+      PAIE_COOKIE_SECURE: "true"
+      PAIE_BACKUP_DIR: /app/data/backups
+      PAIE_BACKUP_RETENTION: ${PAIE_BACKUP_RETENTION:-0}
+    volumes:
+      - /opt/hbnfactory/platforms/paie/data/backups:/app/data/backups
+      - /opt/hbnfactory/platforms/paie/data/logs:/app/data/logs
+    networks:
+      - paie-internal          # base
+      - hbn-proxy              # exposition via Traefik
+    labels:
+      traefik.enable: "${PAIE_ROUTE_ENABLED:-false}"
+      traefik.docker.network: hbn-proxy
+      traefik.http.routers.paie.rule: Host(`paie.hbnfactory.cloud`)
+      traefik.http.routers.paie.entrypoints: websecure
+      traefik.http.routers.paie.tls: "true"
+      traefik.http.routers.paie.tls.certresolver: le
+      traefik.http.routers.paie.middlewares: hbn-secure-headers@file
+      traefik.http.services.paie.loadbalancer.server.port: "8000"
+
+networks:
+  paie-internal:
+    name: paie-internal
+    internal: true             # aucun accès Internet
+  hbn-proxy:
+    external: true

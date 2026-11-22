@@ -2,8 +2,15 @@ upstream/
 .git/
 .env*
 data/
+backend/data/
 migration/
 secrets/
 *.db
 docs/
 .venv*/
+**/__pycache__/
+**/.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/

@@ -17,8 +17,6 @@ import io
 import re
 from pathlib import Path
 
-import pdfplumber
-
 from app.paie.core.models.payroll import STATUT_CALCULEE, STATUT_CLOTUREE, STATUTS_OUVERTS
 from app.paie.repositories.db import Database
 from app.paie.services import master_data, payroll
@@ -32,6 +30,8 @@ DATED = [(re.compile(r"Paie clôturée le \d\d/\d\d/\d{4}"), "Paie clôturée le
 
 
 def pdf_lines(content: bytes) -> list[str]:
+    import pdfplumber  # dépendance de vérification (image de dev), absente de l'image de production
+
     with pdfplumber.open(io.BytesIO(content)) as pdf:
         lines = [line for page in pdf.pages for line in (page.extract_text() or "").splitlines()]
     out = []
